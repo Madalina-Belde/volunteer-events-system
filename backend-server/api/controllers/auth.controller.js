@@ -28,24 +28,15 @@ exports.register_user = function(req, res) {
 };
 
 exports.get_user_id = function(req, res) {
-    var token = req.headers['x-access-token'];
-    if (!token)
-        return res.status(401).send({ auth: false, message: 'No token provided.' });
+    User.findById(req.userId,
+        { password: 0 },
+        function(err, user) {
+            if (err)
+                return res.status(500).send('There was a problem finding the user.');
+            if (!user)
+                return res.status(404).send('No user found.');
 
-    jwt.verify(token, config.secret, function(err, decoded) {
-        if (err)
-            return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-        User.findById(decoded.id,
-            { password: 0 },
-            function(err, user) {
-                if (err)
-                    return res.status(500).send('There was a problem finding the user.');
-                if (!user)
-                    return res.status(404).send('No user found.');
-
-                res.status(200).send(user);
-        });
+            res.status(200).send(user);
     });
 };
 
@@ -65,5 +56,20 @@ exports.login = function(req, res) {
         });
 
         res.status(200).send({ auth: true, token: token });
+    });
+};
+
+exports.verifyToken = function(req, res, next) {
+    var token = req.headers['x-access-token'];
+    if (!token)
+        return res.status(403).send({ auth: false, message: 'No token provided.' });
+
+    jwt.verify(token, config.secret, function(err, decoded) {
+        if (err)
+            return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+        // token is good, save to request for use in other routes
+        req.userId = decoded.id;
+        next();
     });
 };

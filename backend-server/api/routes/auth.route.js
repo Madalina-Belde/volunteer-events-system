@@ -6,7 +6,7 @@ module.exports = function(app) {
         .post(authController.register_user);
 
     app.route('/api/auth/me')
-        .get(authController.get_user_id);
+        .get(authController.verifyToken, authController.get_user_id);
 
     app.route('/api/auth/login')
         .post(authController.login)
