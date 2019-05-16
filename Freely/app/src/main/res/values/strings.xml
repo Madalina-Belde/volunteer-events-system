@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Freely</string>
+    <string name="sign_in_text">Sign In</string>
+    <string name="login_button">Login</string>
+    <string name="don_t_have_an_account_register_now">Don\'t have an account? Register now!</string>
+    <string name="register_text">Register</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="re_type_password">Re-type Password</string>
+    <string name="name">Lorina Dundau</string>
+    <string name="edit">Edit</string>
+    <string name="personal_description">Imi place sa ma dau cu bicicleta si sa tai frunze la caini.</string>
+</resources>
