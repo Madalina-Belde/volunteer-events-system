@@ -27,19 +27,6 @@ exports.register_user = function(req, res) {
     });
 };
 
-exports.get_user_id = function(req, res) {
-    User.findById(req.userId,
-        { password: 0 },
-        function(err, user) {
-            if (err)
-                return res.status(500).send('There was a problem finding the user.');
-            if (!user)
-                return res.status(404).send('No user found.');
-
-            res.status(200).send(user);
-    });
-};
-
 exports.login = function(req, res) {
     User.findOne({ email: req.body.email }, function(err, user) {
         if (err)
@@ -59,7 +46,20 @@ exports.login = function(req, res) {
     });
 };
 
-exports.verifyToken = function(req, res, next) {
+exports.get_my_user = function(req, res) {
+    User.findById(req.userId,
+        { password: 0 },
+        function(err, user) {
+            if (err)
+                return res.status(500).send('There was a problem finding the user.');
+            if (!user)
+                return res.status(404).send('No user found.');
+
+            res.status(200).send(user);
+    });
+};
+
+exports.verify_token = function(req, res, next) {
     var token = req.headers['x-access-token'];
     if (!token)
         return res.status(403).send({ auth: false, message: 'No token provided.' });
@@ -72,4 +72,27 @@ exports.verifyToken = function(req, res, next) {
         req.userId = decoded.id;
         next();
     });
+};
+
+var verify_permission_admin = function(req, res, next) {
+    if (!User.is_admin(req.userId))
+        return res.status(500).send({ auth: false, message: 'Permission required for this action.' });
+    next();
+};
+
+var verify_permission_volunteer = function(req, res, next) {
+    if (!User.is_volunteer(req.userId) && !User.is_admin(req.userId))
+        return res.status(500).send({ auth: false, message: 'Permission required for this action.' });
+    next();
+};
+
+var verify_permission_ngo = function(req, res, next) {
+    console.log(User.is_ngo);
+    if (!User.is_ngo(req.userId) && !User.is_admin(req.userId))
+        return res.status(500).send({ auth: false, message: 'Permission required for this action.' });
+    next();
+};
+
+exports.verify_permission_ngo = function() {
+    return verify_permission_ngo();
 };
