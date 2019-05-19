@@ -27,12 +27,12 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String txt = emailEditTxt.getText().toString();
-                if(!ValidityUtils.isEmailValid(txt))
+               /* if(!ValidityUtils.isEmailValid(txt))
                     Toast.makeText(LoginActivity.this,"Email-ul "+txt+" este gresit",Toast.LENGTH_SHORT).show();
-                else{
-                    Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                else{*/
+                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                     startActivity(intent);
-                }
+                //}
             }
         });
     }
